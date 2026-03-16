@@ -1,18 +1,79 @@
-@model TModel
+@* @model IEnumerable<Microsoft.AspNetCore.Identity.IdentityRole> *@
+@model IEnumerable<Microsoft.AspNetCore.Identity.IdentityRole>
 
 @{
-    Layout = null;
+    ViewData["Title"] = "Role Management";
 }
 
-<!DOCTYPE html>
+<h1>Role Management</h1>
 
-<html>
-<head>
-    <title>title</title>
-</head>
-<body>
-<div>
-      
-</div>
-</body>
-</html>
+@if (User.IsInRole("Admin"))
+{
+    <div class="row">
+        <div class="col-md-6">
+            <div class="card mb-4">
+                <div class="card-header">
+                    <h4>Create New Role</h4>
+                </div>
+                <div class="card-body">
+                    <form asp-action="CreateRole" method="post">
+                        <div class="form-group">
+                            <label for="roleName">Role Name</label>
+                            <input type="text" name="roleName" class="form-control" required />
+                        </div>
+                        <button type="submit" class="btn btn-primary mt-2">Create Role</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-header">
+                    <h4>Existing Roles</h4>
+                </div>
+                <div class="card-body">
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>Role Name</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var role in Model)
+                            {
+                                <tr>
+                                    <td>@role.Name</td>
+                                    <td>
+                                        @if (role.Name != "Admin")
+                                        {
+                                            <form asp-action="DeleteRole" method="post" style="display: inline;">
+                                                <input type="hidden" name="id" value="@role.Id" />
+                                                <button type="submit" class="btn btn-danger btn-sm" 
+                                                        onclick="return confirm('Would you like to delete this role?');">
+                                                    Delete
+                                                </button>
+                                            </form>
+                                        }
+                                        else
+                                        {
+                                            <span class="badge bg-secondary">Protected</span>
+                                        }
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+else
+{
+    <div class="alert alert-danger">
+        <h4>Access Denied</h4>
+        <p>You don't have permission to view this page.</p>
+    </div>
+}

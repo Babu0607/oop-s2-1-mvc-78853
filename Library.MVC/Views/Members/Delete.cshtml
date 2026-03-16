@@ -1,18 +1,33 @@
-@model TModel
+@model Library.Domain.Member
 
 @{
-    Layout = null;
+    ViewData["Title"] = "Delete Member";
 }
 
-<!DOCTYPE html>
+<h1>Delete Member</h1>
 
-<html>
-<head>
-    <title>title</title>
-</head>
-<body>
-<div>
-      
+<div class="alert alert-danger">
+    <h3>Would you like to delete this member?</h3>
 </div>
-</body>
-</html>
+
+<div class="card">
+    <div class="card-body">
+        <dl class="row">
+            <dt class="col-sm-3">Full Name</dt>
+            <dd class="col-sm-9">@Model.FullName</dd>
+
+            <dt class="col-sm-3">Email</dt>
+            <dd class="col-sm-9">@Model.Email</dd>
+
+            <dt class="col-sm-3">Phone</dt>
+            <dd class="col-sm-9">@Model.PhoneNumber</dd>
+        </dl>
+    </div>
+    <div class="card-footer">
+        <form asp-action="Delete" method="post">
+            <input type="hidden" asp-for="Id" />
+            <input type="submit" value="Delete" class="btn btn-danger" />
+            <a asp-action="Index" class="btn btn-secondary">Cancel</a>
+        </form>
+    </div>
+</div>

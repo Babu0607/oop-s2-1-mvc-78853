@@ -1,18 +1,60 @@
-@model TModel
+@* @model IEnumerable<Library.Domain.Loan> *@
+@model IEnumerable<Library.Domain.Loan>
 
 @{
-    Layout = null;
+    ViewData["Title"] = "Loans";
 }
 
-<!DOCTYPE html>
+<h1>Loans</h1>
 
-<html>
-<head>
-    <title>title</title>
-</head>
-<body>
-<div>
-      
-</div>
-</body>
-</html>
+<p>
+    <a asp-action="Create" class="btn btn-primary">Create New Loan</a>
+    <a asp-action="Overdue" class="btn btn-warning">View Overdue Loans</a>
+</p>
+
+<table class="table">
+    <thead>
+    <tr>
+        <th>Book</th>
+        <th>Member</th>
+        <th>Loan Date</th>
+        <th>Due Date</th>
+        <th>Status</th>
+        <th>Actions</th>
+    </tr>
+    </thead>
+    <tbody>
+    @foreach (var item in Model)
+    {
+        <tr>
+            <td>@item.Book?.Title</td>
+            <td>@item.Member?.FullName</td>
+            <td>@item.LoanDate.ToShortDateString()</td>
+            <td>@item.DueDate.ToShortDateString()</td>
+            <td>
+                @if (item.ReturnedDate.HasValue)
+                {
+                    <span class="badge bg-success">Returned @item.ReturnedDate.Value.ToShortDateString()</span>
+                }
+                else if (item.DueDate < DateTime.Today)
+                {
+                    <span class="badge bg-danger">Overdue</span>
+                }
+                else
+                {
+                    <span class="badge bg-primary">Active</span>
+                }
+            </td>
+            <td>
+                @if (!item.ReturnedDate.HasValue)
+                {
+                    <form asp-action="Return" method="post" style="display: inline;">
+                        <input type="hidden" name="id" value="@item.Id" />
+                        <button type="submit" class="btn btn-sm btn-success">Return</button>
+                    </form>
+                }
+            </td>
+        </tr>
+    }
+    </tbody>
+</table>

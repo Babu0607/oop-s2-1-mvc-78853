@@ -1,18 +1,36 @@
-@model TModel
+@model Library.Domain.Loan
 
 @{
-    Layout = null;
+    ViewData["Title"] = "Create Loan";
 }
 
-<!DOCTYPE html>
+<h1>Create New Loan</h1>
 
-<html>
-<head>
-    <title>title</title>
-</head>
-<body>
-<div>
-      
+<div class="row">
+    <div class="col-md-6">
+        <form asp-action="Create">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            
+            <div class="form-group mb-3">
+                <label asp-for="BookId" class="control-label">Select Book</label>
+                <select asp-for="BookId" class="form-control" asp-items="ViewBag.BookId">
+                    <option value="">-- Select Book --</option>
+                </select>
+                <span asp-validation-for="BookId" class="text-danger"></span>
+            </div>
+            
+            <div class="form-group mb-3">
+                <label asp-for="MemberId" class="control-label">Select Member</label>
+                <select asp-for="MemberId" class="form-control" asp-items="ViewBag.MemberId">
+                    <option value="">-- Select Member --</option>
+                </select>
+                <span asp-validation-for="MemberId" class="text-danger"></span>
+            </div>
+            
+            <div class="form-group">
+                <input type="submit" value="Create Loan" class="btn btn-primary" />
+                <a asp-action="Index" class="btn btn-secondary">Back to List</a>
+            </div>
+        </form>
+    </div>
 </div>
-</body>
-</html>

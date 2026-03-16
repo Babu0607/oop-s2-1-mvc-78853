@@ -1,18 +1,52 @@
-@model TModel
+@model IEnumerable<Library.Domain.Loan>
 
 @{
-    Layout = null;
+    ViewData["Title"] = "Overdue Loans";
 }
 
-<!DOCTYPE html>
+<h1>Overdue Loans</h1>
 
-<html>
-<head>
-    <title>title</title>
-</head>
-<body>
-<div>
-      
-</div>
-</body>
-</html>
+<p>
+    <a asp-action="Index" class="btn btn-secondary">Back All Loans</a>
+</p>
+
+@if (!Model.Any())
+{
+    <div class="alert alert-success">
+        No overdue loans!
+    </div>
+}
+else
+{
+    <table class="table table-danger">
+        <thead>
+        <tr>
+            <th>Book</th>
+            <th>Member</th>
+            <th>Loan Date</th>
+            <th>Due Date</th>
+            <th>Days Overdue</th>
+            <th>Actions</th>
+        </tr>
+        </thead>
+        <tbody>
+        @foreach (var item in Model)
+        {
+            var daysOverdue = (DateTime.Today - item.DueDate).Days;
+            <tr>
+                <td>@item.Book?.Title</td>
+                <td>@item.Member?.FullName</td>
+                <td>@item.LoanDate.ToShortDateString()</td>
+                <td>@item.DueDate.ToShortDateString()</td>
+                <td><strong>@daysOverdue days</strong></td>
+                <td>
+                    <form asp-action="Return" method="post" style="display: inline;">
+                        <input type="hidden" name="id" value="@item.Id" />
+                        <button type="submit" class="btn btn-sm btn-success">Return Now</button>
+                    </form>
+                </td>
+            </tr>
+        }
+        </tbody>
+    </table>
+}

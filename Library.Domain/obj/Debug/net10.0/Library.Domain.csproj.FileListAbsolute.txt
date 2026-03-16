@@ -1,0 +1,13 @@
+/Users/babu/Documents/oop-s2-1-mvc-78853/oop-s2-1-mvc-78853/Library.Domain/bin/Debug/net10.0/Library.Domain.deps.json
+/Users/babu/Documents/oop-s2-1-mvc-78853/oop-s2-1-mvc-78853/Library.Domain/bin/Debug/net10.0/Library.Domain.dll
+/Users/babu/Documents/oop-s2-1-mvc-78853/oop-s2-1-mvc-78853/Library.Domain/bin/Debug/net10.0/Library.Domain.pdb
+/Users/babu/Documents/oop-s2-1-mvc-78853/oop-s2-1-mvc-78853/Library.Domain/obj/Debug/net10.0/Library.Domain.csproj.AssemblyReference.cache
+/Users/babu/Documents/oop-s2-1-mvc-78853/oop-s2-1-mvc-78853/Library.Domain/obj/Debug/net10.0/Library.Domain.GeneratedMSBuildEditorConfig.editorconfig
+/Users/babu/Documents/oop-s2-1-mvc-78853/oop-s2-1-mvc-78853/Library.Domain/obj/Debug/net10.0/Library.Domain.AssemblyInfoInputs.cache
+/Users/babu/Documents/oop-s2-1-mvc-78853/oop-s2-1-mvc-78853/Library.Domain/obj/Debug/net10.0/Library.Domain.AssemblyInfo.cs
+/Users/babu/Documents/oop-s2-1-mvc-78853/oop-s2-1-mvc-78853/Library.Domain/obj/Debug/net10.0/Library.Domain.csproj.CoreCompileInputs.cache
+/Users/babu/Documents/oop-s2-1-mvc-78853/oop-s2-1-mvc-78853/Library.Domain/obj/Debug/net10.0/Library.Domain.sourcelink.json
+/Users/babu/Documents/oop-s2-1-mvc-78853/oop-s2-1-mvc-78853/Library.Domain/obj/Debug/net10.0/Library.Domain.dll
+/Users/babu/Documents/oop-s2-1-mvc-78853/oop-s2-1-mvc-78853/Library.Domain/obj/Debug/net10.0/refint/Library.Domain.dll
+/Users/babu/Documents/oop-s2-1-mvc-78853/oop-s2-1-mvc-78853/Library.Domain/obj/Debug/net10.0/Library.Domain.pdb
+/Users/babu/Documents/oop-s2-1-mvc-78853/oop-s2-1-mvc-78853/Library.Domain/obj/Debug/net10.0/ref/Library.Domain.dll

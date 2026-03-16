@@ -1,47 +1,58 @@
-using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Library.MVC.Data;
+using Microsoft.AspNetCore.Identity;
+using Library.MVC.Services;  // Add this for SeedData
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
-var connectionString = builder.Configuration.GetConnectionString("DefaultConnection") ??
-                       throw new InvalidOperationException("Connection string 'DefaultConnection' not found.");
+builder.Services.AddControllersWithViews();
+
+// Add DbContext
+var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseSqlite(connectionString));
-builder.Services.AddDatabaseDeveloperPageExceptionFilter();
 
-builder.Services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = true)
+// Add Identity services - THIS IS THE IMPORTANT PART!
+builder.Services.AddDefaultIdentity<IdentityUser>(options => 
+    {
+        // Password settings
+        options.SignIn.RequireConfirmedAccount = false;
+        options.Password.RequireDigit = true;
+        options.Password.RequiredLength = 6;
+        options.Password.RequireNonAlphanumeric = false;
+        options.Password.RequireUppercase = true;
+        options.Password.RequireLowercase = true;
+    })
+    .AddRoles<IdentityRole>()  // Add role services
     .AddEntityFrameworkStores<ApplicationDbContext>();
-builder.Services.AddControllersWithViews();
 
 var app = builder.Build();
 
-// Configure the HTTP request pipeline.
-if (app.Environment.IsDevelopment())
+// seedData
+using (var scope = app.Services.CreateScope())
 {
-    app.UseMigrationsEndPoint();
+    await SeedData.Initialize(scope.ServiceProvider);
 }
-else
+
+// Configure the HTTP request pipeline.
+if (!app.Environment.IsDevelopment())
 {
     app.UseExceptionHandler("/Home/Error");
-    // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
     app.UseHsts();
 }
 
 app.UseHttpsRedirection();
+app.UseStaticFiles();
+
 app.UseRouting();
 
-app.UseAuthorization();
-
-app.MapStaticAssets();
+app.UseAuthentication();  // Add this
+app.UseAuthorization();   // Add this
 
 app.MapControllerRoute(
-        name: "default",
-        pattern: "{controller=Home}/{action=Index}/{id?}")
-    .WithStaticAssets();
-
-app.MapRazorPages()
-    .WithStaticAssets();
+    name: "default",
+    pattern: "{controller=Home}/{action=Index}/{id?}");
+app.MapRazorPages();  // Add this for Identity pages
 
 app.Run();

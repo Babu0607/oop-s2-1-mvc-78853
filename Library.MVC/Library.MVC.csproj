@@ -4,19 +4,35 @@
         <TargetFramework>net10.0</TargetFramework>
         <Nullable>enable</Nullable>
         <ImplicitUsings>enable</ImplicitUsings>
-        <UserSecretsId>aspnet-Library.MVC-42593ae0-77a6-4c2f-bdf6-20be1b59f1bc</UserSecretsId>
+        <UserSecretsId>aspnet-Library.MVC-a992ee0a-1db3-4647-ace6-aa99199b7643</UserSecretsId>
     </PropertyGroup>
 
     <ItemGroup>
-        <None Update="app.db" CopyToOutputDirectory="PreserveNewest" ExcludeFromSingleFile="true"/>
+        <None Update="app.db" CopyToOutputDirectory="PreserveNewest" ExcludeFromSingleFile="true" />
     </ItemGroup>
 
     <ItemGroup>
-        <PackageReference Include="Microsoft.AspNetCore.Diagnostics.EntityFrameworkCore" Version="10.0.2"/>
-        <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="10.0.2"/>
-        <PackageReference Include="Microsoft.AspNetCore.Identity.UI" Version="10.0.2"/>
-        <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="10.0.2"/>
-        <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="10.0.2"/>
+        <PackageReference Include="Bogus" Version="35.6.5" />
+        <PackageReference Include="Microsoft.AspNetCore.Diagnostics.EntityFrameworkCore" Version="10.0.2" />
+        <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="10.0.2" />
+        <PackageReference Include="Microsoft.AspNetCore.Identity.UI" Version="10.0.2" />
+        <PackageReference Include="Microsoft.AspNetCore.Mvc.ViewFeatures" Version="2.3.9" />
+        <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="10.0.2" />
+        <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="10.0.2" />
+        <PackageReference Include="Moq" Version="4.20.72" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <_ContentIncludedByDefault Remove="Views\Customers\Create.cshtml" />
+      <_ContentIncludedByDefault Remove="Views\Customers\Delete.cshtml" />
+      <_ContentIncludedByDefault Remove="Views\Customers\Details.cshtml" />
+      <_ContentIncludedByDefault Remove="Views\Customers\Edit.cshtml" />
+      <_ContentIncludedByDefault Remove="Views\Customers\Index.cshtml" />
+      <_ContentIncludedByDefault Remove="Views\Invoices\Create.cshtml" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\Library.Domain\Library.Domain.csproj" />
     </ItemGroup>
 
 </Project>
