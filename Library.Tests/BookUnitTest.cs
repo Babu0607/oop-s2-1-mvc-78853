@@ -9,7 +9,6 @@ public class BookUnitTest
     [Fact]
     public void CanCreateBook()
     {
-        // Arrange
         var book = new Book
         {
             Id = 1,
@@ -20,7 +19,6 @@ public class BookUnitTest
             IsAvailable = true
         };
 
-        // Act & Assert
         Assert.Equal(1, book.Id);
         Assert.Equal("Test Book", book.Title);
         Assert.Equal("Test Author", book.Author);
