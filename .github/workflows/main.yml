@@ -60,7 +60,7 @@ jobs:
         run: |
           export PATH="$PATH:~/.dotnet/tools"
           reportgenerator \
-            -reports:**/coverage.cobertura.xml \
+            -reports:**/*/coverage.cobertura.xml \
             -targetdir:coveragereport \
             -reporttypes:Html
 
