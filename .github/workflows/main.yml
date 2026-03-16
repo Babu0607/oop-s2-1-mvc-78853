@@ -1,4 +1,3 @@
-
 name: Test & Publish Coverage (xUnit + ReportGenerator)
 
 on:
@@ -20,8 +19,8 @@ permissions:
 
 env:
   DOTNET_VERSION: "8.0.x"
-  # Point this to your xUnit test project (csproj). Adjust as needed. Minor change
-  TEST_PROJECT: "AppWorkflow.Tests/AppWorkflow.Tests.csproj"
+  # Fixed: Changed to your actual test project
+  TEST_PROJECT: "Library.Tests/Library.Tests.csproj"
 
 jobs:
   build-and-test:
@@ -49,20 +48,34 @@ jobs:
 
       # xUnit tests + Coverlet data collector
       - name: Test (xUnit) and collect coverage
-        run: >
-          dotnet test $TEST_PROJECT -c Release --no-build
-          --collect:"XPlat Code Coverage"
-          --logger "trx;LogFileName=test-results.trx"
+        run: |
+          dotnet test $TEST_PROJECT -c Release --no-build \
+            --collect:"XPlat Code Coverage" \
+            --logger "trx;LogFileName=test-results.trx" \
+            --results-directory ./TestResults
+
       - name: Install ReportGenerator
         run: dotnet tool install -g dotnet-reportgenerator-globaltool
 
       - name: Generate HTML coverage report
         run: |
           export PATH="$PATH:~/.dotnet/tools"
-          reportgenerator \
-            -reports:**/coverage.cobertura.xml \
-            -targetdir:coveragereport \
-            -reporttypes:Html
+          # Try to find coverage files
+          COVERAGE_FILE=$(find . -name "*.cobertura.xml" -type f | head -1)
+          if [ -n "$COVERAGE_FILE" ]; then
+            echo "Found coverage at: $COVERAGE_FILE"
+            reportgenerator \
+              -reports:"$COVERAGE_FILE" \
+              -targetdir:coveragereport \
+              -reporttypes:Html
+          else
+            echo "Using wildcard pattern"
+            reportgenerator \
+              -reports:**/TestResults/**/coverage.cobertura.xml \
+              -targetdir:coveragereport \
+              -reporttypes:Html
+          fi
+
       # Make the HTML report available as a workflow artifact on PRs too
       - name: Upload coverage as build artifact
         uses: actions/upload-artifact@v4
@@ -89,5 +102,3 @@ jobs:
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v4
-
- 
