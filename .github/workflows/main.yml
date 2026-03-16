@@ -1,28 +1,124 @@
-name: Build and Test
+name: Test & Publish Coverage (xUnit + ReportGenerator)
 
 on:
+  workflow_dispatch: 
   push:
-    branches: [ main ]
+    branches: [ master, main ]
   pull_request:
-    branches: [ main ]
+
+# Avoid overlapping Pages deployments
+concurrency:
+  group: "pages"
+  cancel-in-progress: true
+
+# Required for GitHub Pages deploy
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+env:
+  DOTNET_VERSION: "10.0.x"
+  # Fixed: Your actual test project
+  TEST_PROJECT: "Library.Tests/Library.Tests.csproj"
 
 jobs:
   build-and-test:
     runs-on: ubuntu-latest
 
     steps:
-    - uses: actions/checkout@v4
-    
-    - name: Setup .NET
-      uses: actions/setup-dotnet@v4
-      with:
-        dotnet-version: 8.0.x
-    
-    - name: Restore dependencies
-      run: dotnet restore
-    
-    - name: Build
-      run: dotnet build --no-restore --configuration Release
-    
-    - name: Test
-      run: dotnet test --no-build --configuration Release --verbosity normal
+      - uses: actions/checkout@v4
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: ${{ env.DOTNET_VERSION }}
+
+      - name: Restore
+        run: dotnet restore
+
+      - name: Build
+        run: dotnet build --no-restore -c Release
+
+      - name: Show working directory
+        run: pwd
+
+      - name: List root directory
+        run: ls -la
+
+      # Install required packages for coverage
+      - name: Install coverlet collector
+        run: dotnet add $TEST_PROJECT package coverlet.collector
+
+      # xUnit tests + Coverlet data collector
+      - name: Test (xUnit) and collect coverage
+        run: |
+          dotnet test $TEST_PROJECT -c Release \
+            --collect:"XPlat Code Coverage" \
+            --logger "trx;LogFileName=test-results.trx" \
+            --results-directory ./TestResults \
+            --settings <(echo '<?xml version="1.0" encoding="utf-8"?>
+            <RunSettings>
+              <DataCollectionRunSettings>
+                <DataCollectors>
+                  <DataCollector friendlyName="XPlat code coverage">
+                    <Configuration>
+                      <Format>cobertura</Format>
+                    </Configuration>
+                  </DataCollector>
+                </DataCollectors>
+              </DataCollectionRunSettings>
+            </RunSettings>')
+
+      - name: Find coverage file
+        id: find-coverage
+        run: |
+          COVERAGE_FILE=$(find . -name "*.cobertura.xml" -type f | head -1)
+          echo "coverage-file=$COVERAGE_FILE" >> $GITHUB_OUTPUT
+          echo "Found coverage file: $COVERAGE_FILE"
+
+      - name: Install ReportGenerator
+        run: dotnet tool install -g dotnet-reportgenerator-globaltool
+
+      - name: Generate HTML coverage report
+        if: steps.find-coverage.outputs.coverage-file != ''
+        run: |
+          export PATH="$PATH:~/.dotnet/tools"
+          reportgenerator \
+            -reports:"${{ steps.find-coverage.outputs.coverage-file }}" \
+            -targetdir:coveragereport \
+            -reporttypes:Html
+
+      # If no coverage file found, create empty report
+      - name: Create empty report if no coverage
+        if: steps.find-coverage.outputs.coverage-file == ''
+        run: |
+          mkdir -p coveragereport
+          echo "<html><body><h1>No coverage data available</h1></body></html>" > coveragereport/index.html
+
+      # Make the HTML report available as a workflow artifact on PRs too
+      - name: Upload coverage as build artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: coverage-html
+          path: coveragereport
+
+      # Only package for Pages when merging/pushing to main
+      - name: Upload Pages artifact
+        if: github.event_name == 'push' && (github.ref == 'refs/heads/master' || github.ref == 'refs/heads/main')
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: ./coveragereport
+
+  deploy:
+    # Only deploy on push to main
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    needs: build-and-test
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
